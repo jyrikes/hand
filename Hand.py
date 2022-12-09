@@ -1,5 +1,17 @@
 import Servo as servo
 import math
+import numpy as np
+def angulos(vetor1, vetor2):
+  a = np.array(vetor1)
+  b = np.array(vetor2)
+  c = np.hypot(vetor1[0],vetor1[1])
+  d = np.hypot(vetor2[0],vetor2[1])
+  pro = np.cross(a,b)
+  tan = (pro/(c*d))
+  tan = np.abs(tan)
+  #print(tan)
+  return(np.degrees(np.arccos(tan)))
+
 class Hand():
   def __init__(self,placa,polegar,indicador,medio,anelar, minino):
     self.polegar = polegar
@@ -29,7 +41,7 @@ class Hand():
     self.motorMinimo.move(pos5)
     
   def move(self,lmList):
-    pos1 = self.calcularDistancia(lmList,0,4)
+    pos1 = self.calcularDistanciaPolegar(lmList,0,2,4)
     pos2 = self.calcularDistancia(lmList,0,8)
     pos3 = self.calcularDistancia(lmList,0,12)
     pos4 = self.calcularDistancia(lmList,0,16)
@@ -51,4 +63,48 @@ class Hand():
  
         
         return(int((length/180)*100))
-  
+  def calcularDistanciaPolegar(self,lmList,pontoA1,pontoB1,pontoB2):
+        vetor1 = []
+        vetor2 = []
+        
+        x11, y11 = lmList[pontoA1][1], lmList[pontoA1][2]
+        x21, y21 = lmList[pontoB1][1], lmList[pontoB1][2]
+        
+        x12, y12 =lmList[pontoB1][1], lmList[pontoB1][2]
+        x22, y22 =lmList[pontoB2][1], lmList[pontoB2][2]
+        
+        
+        #cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+        
+        vetor1.append(x21 - x11)
+        vetor1.append(y21 - y11)
+        vetor2.append(x22 - x12)
+        vetor2.append(y22 - y12)
+        
+        #colocando na tela 
+        
+      #  cv2.circle(img, (x1, y1),5, (255, 0, 255), cv2.FILLED)
+       # cv2.circle(img, (x2, y2), 5, (255, 0, 255), cv2.FILLED)
+       # cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+      #  cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+        #length = math.hypot(x2 - x1, y2 - y1)
+         
+        angulo = angulos(vetor1,vetor2)
+   
+        
+        
+
+        if angulo == None:
+          angulo = 0
+        if angulo > 50:
+          angulo = 50
+        if angulo < 15:
+          angulo = 0
+          
+        angulo = np.abs(angulo)
+          
+          
+        print(int(angulo))
+        
+        return(int(angulo))
+    
