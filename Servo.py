@@ -10,13 +10,6 @@ class servo():
         #board.digital[pin].mode = SERVO
         board.set_pin_mode_servo(self.pin)
 
-        
-   
-    
-
-    
-
-
     def move(self,angle):
         #self.board.digital[self.pin].write(angle)
         self.board.servo_write(self.pin, angle)

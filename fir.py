@@ -54,6 +54,10 @@ while True:
     try:
         print("Conect")
         angulo = int(input("Digite o angulo : "))
+        servo(board, 5,angulo)
+        servo(board, 16,angulo)
+        servo(board, 4,angulo) # vai de 180 a 0
+        servo(board, 0,angulo)
         servo(board, 2,angulo)
 
     except KeyboardInterrupt:

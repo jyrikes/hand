@@ -1,16 +1,30 @@
 import Servo as servo
 import math
 import numpy as np
-def angulos(vetor1, vetor2):
-  a = np.array(vetor1)
-  b = np.array(vetor2)
-  c = np.hypot(vetor1[0],vetor1[1])
-  d = np.hypot(vetor2[0],vetor2[1])
-  pro = np.cross(a,b)
-  tan = (pro/(c*d))
-  tan = np.abs(tan)
-  #print(tan)
-  return(np.degrees(np.arccos(tan)))
+from time import sleep
+def angulos(vetor1, vetor2,op):
+  if op ==1:
+    a = np.array(vetor1)
+    b = np.array(vetor2)
+    c = np.hypot(vetor1[0],vetor1[1])
+    d = np.hypot(vetor2[0],vetor2[1])
+    
+    pro = np.cross(a,b)
+    tan = (pro/(c*d))
+    tan = np.abs(tan)
+    #print(tan)
+    return(np.degrees(np.arcsin(tan)))
+  else:
+    a = np.array(vetor1)
+    b = np.array(vetor2)
+    c = np.hypot(vetor1[0],vetor1[1])
+    d = np.hypot(vetor2[0],vetor2[1])
+    
+    pro = np.cross(a,b)
+    tan = (pro/(c*d))
+    tan = np.abs(tan)
+    #print(tan)
+    return(np.degrees(np.arccos(tan)))
 
 class Hand():
   def __init__(self,placa,polegar,indicador,medio,anelar, minino):
@@ -35,17 +49,21 @@ class Hand():
     
   def moveHand(self,pos1, pos2 , pos3, pos4, pos5):
     self.motorPolegar.move(pos1)
+   
     self.motorIndicador.move(pos2)
+
     self.motorMedio.move(pos3)
+   
     self.motorAnelar.move(pos4)
     self.motorMinimo.move(pos5)
+
     
   def move(self,lmList):
-    pos1 = self.calcularDistanciaPolegar(lmList,0,2,4)
-    pos2 = self.calcularDistancia(lmList,0,8)
-    pos3 = self.calcularDistancia(lmList,0,12)
-    pos4 = self.calcularDistancia(lmList,0,16)
-    pos5 = self.calcularDistancia(lmList,0,20)
+    pos1 = self.disPolegar(lmList,0,2,4)
+    pos2 = self.anguloInverso(lmList,0,5,8)
+    pos3 = self.anguloNormal(lmList,0,9,12)
+    pos4 = self.anguloInverso(lmList,0,13,16)
+    pos5 = self.anguloInverso(lmList,0,17,20)
     self.moveHand(pos1,pos2,pos3,pos4,pos5)
     
   def calcularDistancia(self,lmList,pontoA,pontoB):
@@ -60,10 +78,9 @@ class Hand():
        # cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
       #  cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
         length = math.hypot(x2 - x1, y2 - y1)
- 
-        
+
         return(int((length/180)*100))
-  def calcularDistanciaPolegar(self,lmList,pontoA1,pontoB1,pontoB2):
+  def disPolegar(self,lmList,pontoA1,pontoB1,pontoB2):
         vetor1 = []
         vetor2 = []
         
@@ -89,17 +106,173 @@ class Hand():
       #  cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
         #length = math.hypot(x2 - x1, y2 - y1)
          
-        angulo = angulos(vetor1,vetor2)
+        angulo = angulos(vetor1,vetor2,0)
+        
+        if angulo == None:
+          angulo = 0
+       
+        elif angulo <= 10 :
+          angulo = 0
+        elif angulo > 5 and angulo <=10:
+          angulo = angulo
+        elif angulo >10 and angulo <= 15:
+          angulo = angulo + 5
+        elif angulo >15 and angulo <= 20:
+          angulo = angulo +5
+        elif angulo >20 and angulo <= 25:
+          angulo = angulo + 5
+        elif angulo > 25 and angulo <=30:
+          angulo = angulo + 5
+        elif angulo >30 and angulo <=35:
+          angulo = angulo + 5
+        elif angulo >35 and angulo <=40:
+          angulo = angulo + 5
+        elif angulo > 40 and angulo <=45:
+          angulo = angulo + 5
+        elif angulo > 45 and angulo <= 50:
+          angulo = angulo + 10
+        elif angulo > 50 and angulo <= 55:
+          angulo = angulo + 10
+        elif angulo > 55 and angulo <= 60:
+          angulo = angulo + 10
+        elif angulo > 60 :
+          angulo = angulo + 10
    
         
         
 
+         
+        
+          
+        angulo = np.abs(angulo)
+          
+         
+        
+        return(int(angulo))
+          
+  def anguloNormal(self,lmList,pontoA1,pontoB1,pontoB2):
+        vetor1 = []
+        vetor2 = []
+        
+        x11, y11 = lmList[pontoA1][1], lmList[pontoA1][2]
+        x21, y21 = lmList[pontoB1][1], lmList[pontoB1][2]
+        
+        x12, y12 =lmList[pontoB1][1], lmList[pontoB1][2]
+        x22, y22 =lmList[pontoB2][1], lmList[pontoB2][2]
+        
+        
+        #cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+        
+        vetor1.append(x21 - x11)
+        vetor1.append(y21 - y11)
+        vetor2.append(x22 - x12)
+        vetor2.append(y22 - y12)
+        
+        #colocando na tela 
+        
+      #  cv2.circle(img, (x1, y1),5, (255, 0, 255), cv2.FILLED)
+       # cv2.circle(img, (x2, y2), 5, (255, 0, 255), cv2.FILLED)
+       # cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+      #  cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+        #length = math.hypot(x2 - x1, y2 - y1)
+         
+        angulo = angulos(vetor1,vetor2,0)
+        
         if angulo == None:
           angulo = 0
-        if angulo > 50:
-          angulo = 50
-        if angulo < 15:
+       
+        elif angulo <= 15 :
           angulo = 0
+        elif angulo > 15 and angulo <=20:
+          angulo = angulo
+        elif angulo >20 and angulo <= 25:
+          angulo = 45
+        elif angulo >25 and angulo <= 30:
+          angulo = angulo +55
+        elif angulo >30 and angulo <= 35:
+          angulo = angulo + 60
+        elif angulo > 35 and angulo <=40:
+          angulo = angulo + 75
+        elif angulo >40 and angulo <=45:
+          angulo = angulo + 90
+        elif angulo >45 and angulo <=50:
+          angulo = angulo + 105
+        elif angulo > 50 and angulo <=55:
+          angulo = angulo + 110
+        elif angulo > 55 and angulo <= 60:
+          angulo = angulo + 120
+        elif angulo > 60:
+          angulo = 180
+   
+        
+        
+          
+
+          
+        angulo = np.abs(angulo)
+        
+         
+        
+        return(int(angulo))
+      
+  
+      
+  def anguloInverso(self,lmList,pontoA1,pontoB1,pontoB2):
+        vetor1 = []
+        vetor2 = []
+        
+        x11, y11 = lmList[pontoA1][1], lmList[pontoA1][2]
+        x21, y21 = lmList[pontoB1][1], lmList[pontoB1][2]
+        
+        x12, y12 =lmList[pontoB1][1], lmList[pontoB1][2]
+        x22, y22 =lmList[pontoB2][1], lmList[pontoB2][2]
+        
+        
+        #cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+        
+        vetor1.append(x21 - x11)
+        vetor1.append(y21 - y11)
+        vetor2.append(x22 - x12)
+        vetor2.append(y22 - y12)
+        
+        #colocando na tela 
+        
+      #  cv2.circle(img, (x1, y1),5, (255, 0, 255), cv2.FILLED)
+       # cv2.circle(img, (x2, y2), 5, (255, 0, 255), cv2.FILLED)
+       # cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+      #  cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+        #length = math.hypot(x2 - x1, y2 - y1)
+         
+        angulo = angulos(vetor1,vetor2,1) 
+   
+        if angulo == None:
+          angulo = 0
+       
+        elif angulo <= 15 :
+          angulo = 0
+        elif angulo > 15 and angulo <=20:
+          angulo = angulo
+        elif angulo >20 and angulo <= 25:
+          angulo = 45
+        elif angulo >25 and angulo <= 30:
+          angulo = angulo +55
+        elif angulo >30 and angulo <= 35:
+          angulo = angulo + 60
+        elif angulo > 35 and angulo <=40:
+          angulo = angulo + 75
+        elif angulo >40 and angulo <=45:
+          angulo = angulo + 90
+        elif angulo >45 and angulo <=50:
+          angulo = angulo + 105
+        elif angulo > 50 and angulo <=55:
+          angulo = angulo + 110
+        elif angulo > 55 and angulo <= 60:
+          angulo = angulo + 120
+        elif angulo > 60:
+          angulo = 180
+        
+
+       
           
         angulo = np.abs(angulo)
           

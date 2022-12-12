@@ -34,7 +34,7 @@ IP_PORT = 3030
 #board = Arduino("COM3")
 board = pymata4.Pymata4(ip_address=IP_ADDRESS, ip_port=IP_PORT)
 print("Conectando")
-hand = h.Hand(board,0,2,4,5,16)
+hand = h.Hand(board,0,5,4,2,16)
 
       
 
